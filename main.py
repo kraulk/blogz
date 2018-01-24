@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template, flash, session
 from flask_sqlalchemy import SQLAlchemy
-from hashutils import make_pw_hash, check_pw_hash
+# from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -13,17 +13,19 @@ class Blog(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	title = db.Column(db.String(120))
 	content = db.Column(db.Text)
+	owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-	def __init__(self, title, content):
+	def __init__(self, title, content, owner_id):
 		self.title = title
 		self.content = content
+		self.owner_id = owner_id
 
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	username = db.Column(db.String(120))
 	# TODO use pw hash for security reasons
-	password = db.Colum(db.String(999))
-	blogs = db.relationship('Blog', backref = 'id')
+	password = db.Column(db.String(999))
+	blogs = db.relationship('Blog', backref = 'owner')
 
 	def __init__(self, username, password):
 		self.username = username
@@ -33,6 +35,15 @@ class User(db.Model):
 def is_empty(text):
 	if len(text) == 0:
 		return True
+
+# Redirect user to login if not signed in and trying to newpost
+
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup', 'blog', 'index']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
 
 @app.route('/blog')
 def blog():
@@ -53,7 +64,9 @@ def new_post():
 	if request.method == 'POST':
 		title = request.form['title']
 		content = request.form['content']
-		new_post = Blog(title, content)
+		owner = User.query.filter_by(username=session['username']).first()
+		new_post = Blog(title, content, owner)
+
 
 		if is_empty(title) or is_empty(content):
 			flash('You must have a title and content to post a new blog.', 'error')
