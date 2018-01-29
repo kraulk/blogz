@@ -2,32 +2,30 @@
 
 {% block content %}
 
-<h1>Register for Blogz!</h1>
-<form action="/signup" method="post">
-    <table>
-        <tr>
-            <td><label for="username">Username:</label></td>
-            <td>
-                <input name="username" type="username" value="{{ username }}">
-            </td>
-            <td class='error'>{{ error_username }}</td>
-        </tr>
-        <tr>
-            <td><label for="password">Password:</label></td>
-            <td>
-                <input name="password" type="password">
-            </td>
-            <td class='error'>{{ error_password }}</td>
-        </tr>
-        <tr>
-            <td><label for="verify">Verify Password:</label></td>
-            <td>
-                <input name="verify" type="password">
-            </td>
-            <td class='error'>{{ error_verify }}</td>
-        </tr>
-    </table>
-    <input type="submit" value="Signup!">
-</form>
+<div class="row">
+	<h1>Register for Blogz!</h1>
+</div>
+
+<div class="row">
+	<form action="/signup" method="post">
+	  <div class="form-group">
+	    <label for="username">Username</label>
+	    <input class="form-control" name="username" type="username" value="{{ username }}" placeholder="Create a login name" />
+	    <p class="error">{{ error_username }}</p>
+	  </div>
+	  <div class="form-group">
+	    <label for="password">Password</label>
+	    <input class="form-control" name="password" type="password" placeholder="Choose your password">
+	    <p class="error">{{ error_password }}</p>
+	    <small id="emailHelp" class="form-text text-muted">Your password must be greater than 2 characters.</small>
+	  </div>
+	  <div class="form-group">
+	    <label for="verify">Verify Password</label>
+	    <input class="form-control" name="verify" type="password" placeholder="Choose your password">
+	    <p class="error">{{ error_verify }}</p>
+	  </div>
+	  <button class="btn btn-primary" type="submit">Sign up!</button>
+	</form>
+</div>
 
 {% endblock %}

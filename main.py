@@ -105,17 +105,13 @@ def login():
 			session['username'] = username
 			return redirect('/new-post')
 	
-		# TODO handle incorrect logins
 		# User does not exist
 		elif not user:
-			# redirect to /login and flash user does not exist
 			flash('Username does not exist', 'error')
 			return redirect('/login')
 
-
 		# User exists, but password is wrong
 		elif user.password != password:
-			# redirect to /login and flash password is incorrect
 			flash('Password is incorrect.', 'error')
 			return redirect('/login')
 
@@ -190,6 +186,11 @@ def signup():
 							title='Signup')
 
 	return render_template('signup.html')
+
+@app.route('/logout')
+def logout():
+	del session['username']
+	return redirect('/')
 
 
 if __name__ == '__main__':

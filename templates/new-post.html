@@ -2,27 +2,22 @@
 
 {% block content %}
 
-<form method="POST">
-	<div>
-		<label>
-			Post title:
-			<div>
-				<input type="text" name="title" value="{{title}}" />
-			</div>
-		</label>
-	</div>
-	<br>
-	<div>
-		<label>
-			Blog content:
-			<div>
-				<textarea type="text" name="content">{{content}}</textarea>
-			</div>
-		</label>
-	</div>
-	<div>
-	<input type="submit" name="Post new blog!">
-	</div>
-</form>
+<div class="row">
+	<h1>Publish a new post</h1>
+</div>
+
+<div class="row">
+	<form method="POST">
+		<div class="form-group">
+			<label for="title">Post title</label>
+			<input class="form-control" type="text" name="title" value="{{title}}" />
+		</div>
+		<div class="form-group">
+			<label for="content">Blog content</label>
+			<textarea class="form-control" type="text" name="content">{{content}}</textarea>
+		</div>
+		<button class="btn btn-primary" type="submit">Post new blog!</button>
+	</form>
+</div>
 
 {% endblock %}

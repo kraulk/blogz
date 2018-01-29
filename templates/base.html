@@ -3,6 +3,8 @@
 <html>
     <head>
         <title>{{title}}</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <style>
         	.error {
         		color: red;
@@ -12,23 +14,39 @@
     </head>
 <body>
 
-    <nav>
-        <a href="/blog">Main blog page</a>
-        <a href="/new-post">Create new post</a>
-        <a href="/signup">Create account</a>
-
-    </nav>
+    <div class="container">
+        <div class="row">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog"><i class="fa fa-home" aria-hidden="true"></i> Main blog page</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/new-post"><i class="fa fa-pencil" aria-hidden="true"></i> Create new post</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/signup"><i class="fa fa-user-circle" aria-hidden="true"></i> Create account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
-    <ul>
     {% for category,message in messages %}
-        <li class="{{category}}">{{message}}</li>
+        <div class="container"><div class="row">
+            <p class="{{category}}">{{message}}</p>
+        </div></div>
     {% endfor %}
-    </ul>
 	{% endwith %}
-    
-    {% block content %}
-    {% endblock %}
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    </div>
 
 </body>
 </html>
