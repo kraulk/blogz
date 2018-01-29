@@ -36,6 +36,17 @@ def is_empty(text):
 	if len(text) == 0:
 		return True
 
+def has_space(input):
+	if ' ' in input:
+		return True
+
+def within_character_limit(input):
+	if 2 < len(input) < 21:
+		return True
+
+def passwords_match(password, verification):
+	if password == verification:
+		return True
 
 # Redirect user to login if not signed in and trying to newpost
 
@@ -99,15 +110,14 @@ def login():
 		elif not user:
 			# redirect to /login and flash user does not exist
 			flash('Username does not exist', 'error')
-			redirect('/login')
-			print('not user')
+			return redirect('/login')
+
 
 		# User exists, but password is wrong
 		elif user.password != password:
 			# redirect to /login and flash password is incorrect
 			flash('Password is incorrect.', 'error')
-			redirect('/login')
-			print('bad password')
+			return redirect('/login')
 
 
 
@@ -115,8 +125,69 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-	# if request.method == 'POST':
+	if request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
+		verify = request.form['verify']
 
+		error_username = ''
+		error_password = ''
+		error_verify = ''
+
+		existing_user = User.query.filter_by(username=username).first()
+		
+		if (	is_empty(username)
+			or 	is_empty(password)
+			or 	is_empty(verify)
+			):
+			flash('One or more fields is invalid', 'error')
+			return render_template('signup.html', username=username)
+
+		if existing_user:
+			flash('Username already exists', 'error')
+			return redirect('/signup')
+
+		if not existing_user:
+
+			# Username validation
+			# Errors if blank, outside character limit, or has space
+			if (     is_empty(username)
+				or   has_space(username)
+				or   not within_character_limit(username)
+				):
+				error_username = "That's not a valid username"
+
+			# Password validation
+			# Errors if blank, oustisde character limit, or has space 
+			if (     is_empty(password)
+				or   has_space(password)
+				or   not within_character_limit(password)
+				):
+				error_password = "That's not a valid password"
+
+			# Password verification validation
+			# Errors if blank, does not match password
+			if (     is_empty(verify)
+				or   not passwords_match(password,verify)
+				):
+				error_verify = "Passwords don't match"	
+
+			if (    not error_username
+				and not error_password
+				and not error_verify
+				):
+				new_user = User(username, password)
+				db.session.add(new_user)
+				db.session.commit()
+				session['username'] = username
+				return redirect('/new-post')
+
+			return render_template('signup.html', 
+							username=username,
+							error_username=error_username,
+							error_password=error_password,
+							error_verify=error_verify,
+							title='Signup')
 
 	return render_template('signup.html')
 
