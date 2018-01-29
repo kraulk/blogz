@@ -36,6 +36,7 @@ def is_empty(text):
 	if len(text) == 0:
 		return True
 
+
 # Redirect user to login if not signed in and trying to newpost
 
 @app.before_request
@@ -80,6 +81,45 @@ def new_post():
 
 	else:
 		return render_template('new-post.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+
+	if request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
+		user = User.query.filter_by(username=username).first()
+
+		if user and user.password == password:
+			session['username'] = username
+			return redirect('/new-post')
+	
+		# TODO handle incorrect logins
+		# User does not exist
+		elif not user:
+			# redirect to /login and flash user does not exist
+			flash('Username does not exist', 'error')
+			redirect('/login')
+			print('not user')
+
+		# User exists, but password is wrong
+		elif user.password != password:
+			# redirect to /login and flash password is incorrect
+			flash('Password is incorrect.', 'error')
+			redirect('/login')
+			print('bad password')
+
+
+
+	return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+	# if request.method == 'POST':
+
+
+	return render_template('signup.html')
+
 
 if __name__ == '__main__':
 	app.run()

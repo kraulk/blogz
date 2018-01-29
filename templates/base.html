@@ -11,10 +11,13 @@
         </style>
     </head>
 <body>
-	<tr>
-		<td><a href="/blog">Main blog page</a></td>
-		<td><a href="/new-post">Create new post</a></td>
-	</tr>
+
+    <nav>
+        <a href="/blog">Main blog page</a>
+        <a href="/new-post">Create new post</a>
+        <a href="/signup">Create account</a>
+
+    </nav>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
     <ul>
