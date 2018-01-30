@@ -2,15 +2,15 @@
 
 {% block content %}
 <div class="row">
-    <h1>Blogs</h1>
+    <h1>Posts by {{user_display.username}}</h1>
 </div>
 
-{% if all_posts|length == 0 %}
+{% if user_posts|length == 0 %}
     <div class="row">
         <p>No posts yet</p>
     </div>
     {% else %}
-    	{% for post in all_posts %}
+    	{% for post in user_posts %}
             <div class="row">
                 <ul>
                     <h2>

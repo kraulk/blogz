@@ -15,10 +15,10 @@ class Blog(db.Model):
 	content = db.Column(db.Text)
 	owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-	def __init__(self, title, content, owner_id):
+	def __init__(self, title, content, owner):
 		self.title = title
 		self.content = content
-		self.owner_id = owner_id
+		self.owner = owner
 
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -50,11 +50,11 @@ def passwords_match(password, verification):
 
 # Redirect user to login if not signed in and trying to newpost
 
-@app.before_request
-def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'index']
-    if request.endpoint not in allowed_routes and 'username' not in session:
-        return redirect('/login')
+# @app.before_request
+# def require_login():
+#     allowed_routes = ['login', 'signup', 'blog', 'index']
+#     if request.endpoint not in allowed_routes and 'username' not in session:
+#         return redirect('/login')
 
 
 @app.route('/blog')
@@ -62,9 +62,19 @@ def blog():
 
 	post_id = request.args.get('id')
 
-	if (post_id):
+	if post_id:
 		post = Blog.query.get(post_id)
-		return render_template('post.html', title='new post', post=post)
+		return render_template('post.html', title='Post', post=post)
+
+	# TODO - Get working. Clicking username will send to page with all
+	# of user's posts
+	user_id = request.args.get('user')
+	if user_id:
+		user_posts = Blog.query.filter_by(owner_id=user_id).all()
+		user_display = User.query.filter_by(id=user_id).first()
+		return render_template('user-posts.html', tite='User Posts',
+								user_posts=user_posts,
+								user_display=user_display)
 
 	all_posts = Blog.query.order_by(Blog.id.desc()).all()
 	return render_template('blog.html', all_posts=all_posts)
@@ -190,7 +200,13 @@ def signup():
 @app.route('/logout')
 def logout():
 	del session['username']
-	return redirect('/')
+	return redirect('/blog')
+
+@app.route('/')
+def index():
+	title = 'Index'
+	all_users = User.query.order_by(User.username.asc()).all()
+	return render_template('index.html', title=title, all_users=all_users)
 
 
 if __name__ == '__main__':

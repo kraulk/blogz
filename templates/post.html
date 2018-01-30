@@ -4,5 +4,7 @@
 
     <h1>{{post.title}}</h1>
     <p>{{post.content}}</p>
+    <footer class="blockquote-footer"><a href="/blog?user={{post.owner_id}}">{{post.owner.username}}</a></footer>
+
 
 {% endblock %}
