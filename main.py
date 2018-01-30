@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template, flash, session
 from flask_sqlalchemy import SQLAlchemy
-# from hashutils import make_pw_hash, check_pw_hash
+
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -23,7 +23,7 @@ class Blog(db.Model):
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	username = db.Column(db.String(120))
-	# TODO use pw hash for security reasons
+	# TODO use pw hash for security
 	password = db.Column(db.String(999))
 	blogs = db.relationship('Blog', backref = 'owner')
 
@@ -48,13 +48,12 @@ def passwords_match(password, verification):
 	if password == verification:
 		return True
 
-# Redirect user to login if not signed in and trying to newpost
 
-# @app.before_request
-# def require_login():
-#     allowed_routes = ['login', 'signup', 'blog', 'index']
-#     if request.endpoint not in allowed_routes and 'username' not in session:
-#         return redirect('/login')
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup', 'blog', 'index']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
 
 
 @app.route('/blog')
@@ -66,8 +65,6 @@ def blog():
 		post = Blog.query.get(post_id)
 		return render_template('post.html', title='Post', post=post)
 
-	# TODO - Get working. Clicking username will send to page with all
-	# of user's posts
 	user_id = request.args.get('user')
 	if user_id:
 		user_posts = Blog.query.filter_by(owner_id=user_id).all()
